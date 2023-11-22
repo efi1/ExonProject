@@ -1,16 +1,16 @@
 """Minimal setup file for Exon-Media assignment."""
 
-from setuptools import find_namespace_packages
+from setuptools import find_packages
 from distutils.core import setup
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
-    name='ExonMedia',
+    name='ExonProject',
     version='0.1.0',
     description='Exon-Media assignment',
-    packages=find_namespace_packages(where='src'),
+    packages=find_packages('src'),
     package_dir={'': 'src'},
     package_data={
         "data.db_data": ["*.json"],
@@ -23,5 +23,5 @@ setup(
     author='Efi Ovadia',
     author_email='efovadia@gmail.com',
     license='proprietary',
-    install_requires = [required, 'pytest', 'jinja2']
+    install_requires = [required, 'pytest']
 )
