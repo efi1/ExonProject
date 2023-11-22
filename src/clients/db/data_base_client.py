@@ -86,12 +86,13 @@ class DataBaseClient(object):
         res = cursor.fetchall() if fetch_all == True else cursor.fetchone()
         return DefaultMunch.fromDict({"status": "success", "data": res})
 
-    def exec_sql_queries(self, query: List[str] = None, json_fn: str = None, json_dir: str = 'data.db_data',
+    def exec_sql_queries(self, query: List[str] = None, json_dir: str = None, json_fn: str = None,
                          fetch_all: bool = True, raise_error=True, commit: bool = True) -> object:
         """
         execute queries given by a list or by a json file
         :param query: a single query to get executed
-        :param json_fn: json file path (path + file name)
+        :param json_fn: json file name
+        :param json_dir: json file path
         :param json_data: a list of queries within a json file
         :param fetch_all: fetch a single row or all
         :param raise_error: raise an error if occurs
@@ -125,7 +126,7 @@ class DataBaseClient(object):
                 self.conn.commit()
         return DefaultMunch.fromDict({"status": "success", "data": output})
 
-    def insert_into_table(self, json_fn: str, json_dir: str = 'data.db_data',
+    def insert_into_table(self, json_dir: str, json_fn: str,
                           table_name: str = None, raise_error=True) -> object:
         """
         insert a new raw into a table (or a list of tables)

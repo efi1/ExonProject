@@ -53,5 +53,10 @@
 			"seniority": 40,
 			"ref": 1
 		}
+	],
+	"result": [
+		{"option_value": "option1", "product_page_url": "www.ozon.ru"},
+		{"option_value": "option2", "product_page_url": "www.aliexpress.com"},
+		{"option_value": "option3", "product_page_url": "www.similarweb.com/01/website/taobao.com/"}
 	]
 }
