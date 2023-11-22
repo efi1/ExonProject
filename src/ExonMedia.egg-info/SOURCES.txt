@@ -1,0 +1,12 @@
+README.rst
+setup.py
+src/ExonMedia.egg-info/PKG-INFO
+src/ExonMedia.egg-info/SOURCES.txt
+src/ExonMedia.egg-info/dependency_links.txt
+src/ExonMedia.egg-info/requires.txt
+src/ExonMedia.egg-info/top_level.txt
+src/clients/api/search_web_activities.py
+src/clients/db/data_base_client.py
+src/data/db_data/db_data_insertion.json
+src/data/db_data/tables_creation.json
+src/data/db_data/tables_deletion.json

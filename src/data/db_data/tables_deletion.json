@@ -1,0 +1,7 @@
+[
+	"DROP TABLE websites;",
+	"DROP TABLE products;",
+	"DROP TABLE websites_products;",
+	"DROP TABLE search_engine_ranking;",
+	"DROP TABLE ranking_parameters;"
+]

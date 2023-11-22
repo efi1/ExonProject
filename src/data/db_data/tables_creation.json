@@ -1,0 +1,9 @@
+[
+	"CREATE TABLE IF NOT EXISTS websites (id integer primary key AUTOINCREMENT, url varchar(255) NOT NULL, date_created NOT NULL DEFAULT (strftime('%d-%m-%Y', 'now', 'localtime')))",
+	"CREATE TABLE IF NOT EXISTS products (id integer primary key AUTOINCREMENT, name varchar(255) NOT NULL, description varchar(255), keywords varchar(255), date_created NOT NULL DEFAULT (strftime('%d-%m-%Y', 'now', 'localtime')))",
+	"CREATE TABLE IF NOT EXISTS websites_products (id integer primary key AUTOINCREMENT, website_id integer NOT NULL, product_id integer, ref integer, unique_url varchar(255), date_created NOT NULL DEFAULT (strftime('%d-%m-%Y', 'now', 'localtime')))",
+	"CREATE TABLE IF NOT EXISTS search_engine_ranking (id integer primary key AUTOINCREMENT, website_product_rel_id integer NOT NULL, parameter_id integer, parameter_value integer, parameter_grade integer NOT NULL, date_created NOT NULL DEFAULT (strftime('%d-%m-%Y', 'now', 'localtime')))",
+	"CREATE TABLE IF NOT EXISTS ranking_parameters (id integer primary key AUTOINCREMENT, name integer NOT NULL, priority integer, grade_per_unit integer, date_created NOT NULL DEFAULT (strftime('%d-%m-%Y', 'now', 'localtime')))"
+]
+
+

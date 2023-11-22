@@ -1,0 +1,20 @@
+{
+	"products": {
+		"columns": "name, description, keywords",
+		"data": [
+			"'pixel 6', 'google pixel 6 smartphone', 'pixel, smartphone, google, phone, leisure time,'",
+			"'shkatulka', 'russian learning book', 'languages, leisure time,'",
+			"'shkatulka', 'russian learning book edition 2', 'languages, learning, leisure time,'",
+			"'Xioami Box S2', 'Xioami streamer', 'streamer, Xioami Box, Xioami, GoogleTV, leisure time,'",
+			"'pixel 8', 'pixel 8', 'pixel 8, leisure time,'"
+		]
+	},
+	"ranking_parameters": {
+		"columns": "name, priority, grade_per_unit",
+		"data": [
+			"'ref', 1, 15",
+			"'keywords', 2, 5",
+			"'seniority', 3, 1"
+		]
+	}
+}

@@ -1,0 +1,14 @@
+.idea
+.pytest_cache
+venv/
+venv
+dist/
+build/
+src/redAccess.egg-info
+src/clients/__pycache__/
+src/utils/__pycache__/
+logs
+./logfile.log
+logs/logfile.log
+tests/logfile.log
+tests/__pycache__/
