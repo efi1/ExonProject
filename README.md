@@ -1,1 +1,5 @@
-README.rst
+=====================
+Exon Assignment
+=====================
+
+# To be completed
