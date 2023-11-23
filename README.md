@@ -35,7 +35,7 @@ The flow of the main functions of the major client reflects the business logic, 
   - from cli: python -m pytest
     * you should run it while being in the 'src' folder.
 
-- I have only written a single automation test, which reflect the entire flow that described above.
+- I have only written a single automation test, which reflects the entire flow that described above.
 - I will add some more test soon.
 - A test cases description will be added in a separate file by an email.
 
