@@ -91,7 +91,7 @@ in sea        :param ref: references to search website
                          f'update made')
             return
         token = secrets.token_urlsafe()
-        unique_url = F"{url}{token}"
+        unique_url = F"{url}/{token}"
         query = F"insert into websites (url) values ('{url}');"
         self.exec_sql_query(query, fetch_all=False, commit=True)
         query = F"select max(id) from websites;"
