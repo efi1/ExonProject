@@ -16,3 +16,4 @@ logs
 logs/logfile.log
 tests/logfile.log
 tests/__pycache__/
+src/clients/db/searching_engine.db

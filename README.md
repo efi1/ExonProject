@@ -5,7 +5,8 @@ This assignment includes an automation infrastructure (written in Pyhon) for ass
 The automation infrastructure includes two clients;
 - a client which responsible for all DB interactions (create tables, insert, delete, count) and any additional sqlite command to be ran.
 - a major client which responsible for all processes and activities; insertion (two processes), ranking update process, search term api and more.
-The flow of the main functions of the major client is reflect the business logic and it includes these functions:
+  * this client inherits all DB client's functionality and name spaces, which then are used for its own functionalities.
+The flow of the main functions of the major client reflects the business logic, and it includes these functions:
 - insert_products_job -> which includes the process of inserting products to the products table.
 - insert_new_site_into_search_engine_api --> which includes the api together with the process which repsible for inserting websites into the DB
   tables (websites, website_products).
@@ -16,22 +17,26 @@ The flow of the main functions of the major client is reflect the business logic
     - it reads the file, which is created in the former process (in the insert_new_site_into_search_engine_api)  and mentioned before.
     - it updates then the search_engine_ranking with the websites_products with its content.
     - it calculated the parameter_value for each insertion given input - keywords, seniority and references.
-    - Finally for each websites, which represented by the website_product_rel_id, there are 3 entries (for each of the above mentioned inputs).
+    - finally, for each website, which represented by the website_product_rel_id, there are 3 entries (for each of the above-mentioned inputs).
       each entry will have its calculated value.
-    - these 3 records can be sumed up (paramer_values) and can be ranked in compare tp all othere entries.
+    - these 3 records can be sumed up (parameter_values) and can be ranked in compare tp all other entries.
 - get_search_term_options api - this api getting a search term as an input (a key or a list of keys) and returns 3 websites which correspond this
-  term. meanning that they have this search term among their keywords.
-  Also, the result includes the 3 highest ranked websites, meanning the ones which is their total parameter_values are the highest in compare to
+  term. meaning that they have this search term among their keywords.
+  Also, the result includes the 3 highest ranked websites, meaning the ones which is their total parameter_values are the highest in compare to
   other websites. This results take into account also the prioritiy of each of the website's elements which took place in the calculation of the
   parameter_value (it refer to the references, keywords and seniority).
   
-- Befroe running the test:
+- Before running the test:
   - download it to your local environment.
   -  Go to 'src' folder (cli) and run this setup process: python setup.py install
 
 - How to run the test?  
   - from cli: python -m pytest
   - you should run it while being in the 'src' folder.
+
+- I have only written a single automation test, which reflect the entire flow which described above.
+- I will add some more test soon.
+- A test cases description will be added in an email which I will send along with the location of this cose in Github.
 
 
   
