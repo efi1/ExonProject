@@ -35,9 +35,13 @@ The flow of the main functions of the major client reflects the business logic, 
   - from cli: python -m pytest
     * you should run it while being in the 'src' folder.
 
-- I have only written a single automation test, which reflects the entire flow that described above.
-- test's data resides ynder src/data/cfg_test folder.
-- sql queries, table's data which is needed for the clients is resides under src.data.db_data.
+- I have written a single automation test, which reflects the entire flow that described above.
+
+- Project structure:
+    - test's data resides ynder src/data/cfg_test folder.
+    - sql queries, table's data which is needed for the clients is resides under src.data.db_data.
+    - job_data folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api process (+api),
+      and deleted when update_ranking_job process is finished.
   
 
   
