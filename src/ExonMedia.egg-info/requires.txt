@@ -1,3 +1,0 @@
-setuptools~=65.5.0
-pytest
-jinja2
