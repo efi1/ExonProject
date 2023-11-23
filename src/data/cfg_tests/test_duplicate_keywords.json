@@ -1,0 +1,79 @@
+{
+	"websites": [
+		{
+			"url": "www.aliexpress.com",
+			"product": "Xioami Box S2",
+			"keywords": {
+				"key1": "streamer",
+				"key2": "Xioami Box",
+				"key3": "Xioami",
+				"key4": "GoogleTV",
+				"key5": "leisure time",
+				"key6": "leisure time"
+			},
+			"seniority": 5,
+			"ref": 3
+		},
+				{
+			"url": "www.ozon.ru",
+			"product": "shkatulka",
+			"keywords": {
+				"key1": "languages",
+				"key2": "leisure time"
+			},
+			"seniority": 5,
+			"ref": 4
+		},
+				{
+			"url": "www.similarweb.com/01/website/taobao.com/",
+			"product": "pixel 6",
+			"keywords": {
+				"key1": "pixel",
+				"key2": "smartphone",
+				"key3": "google",
+				"key4": "phone",
+				"key5": "leisure time"
+			},
+			"seniority": 20,
+			"ref": 2
+		},
+				{
+			"url": "www.amazon.de",
+			"product": "Xioami box s",
+			"keywords": {},
+			"seniority": 100,
+			"ref": 1
+		},
+		{
+			"url": "www.googlestore.com",
+			"product": "pixel 8",
+			"keywords": {
+				"key1": "pixel 8",
+				"key2": "leisure time"
+			},
+			"seniority": 40,
+			"ref": 1
+		}
+	],
+	"results": {
+		"search_results": [
+			{
+				"option_value": "option1",
+				"product_page_url": "www.ozon.ru"
+			},
+			{
+				"option_value": "option2",
+				"product_page_url": "www.aliexpress.com"
+			},
+			{
+				"option_value": "option3",
+				"product_page_url": "www.similarweb.com/01/website/taobao.com/"
+			}
+		],
+		"ranking_job_result": {
+			"status": "success",
+			"data": [],
+			"msg": "update_ranking_job succeeded"
+		}
+	}
+}

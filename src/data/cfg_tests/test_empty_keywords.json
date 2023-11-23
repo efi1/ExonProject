@@ -1,0 +1,21 @@
+{
+	"websites": [
+      {
+        "url": "www.aliexpress.com",
+        "product": "Xioami Box S2",
+        "keywords": {
+        },
+			"seniority": 20,
+			"ref": 2
+		}
+    ],
+  "results": {
+    "search_results": [],
+    "ranking_job_result": {
+      "status": "success",
+      "data": [],
+      "msg": "No Data Found"
+    }
+  }
+
+}
