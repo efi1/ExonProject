@@ -171,7 +171,7 @@ in sea        :param ref: references to search website
     def get_search_term_options(self, search_term):
         logging.info(f'in {sys._getframe().f_code.co_name}')
         query_url = F"""
-                    SELECT ws.URL --, rnk.website_product_rel_id, rnk.SumVal,rnk.MaxGradeAndValue
+                    SELECT ws.URL, wp.unique_url --, rnk.website_product_rel_id, rnk.SumVal,rnk.MaxGradeAndValue
                     FROM websites ws
                     INNER JOIN websites_products wp on ws.id=wp.website_id
                     INNER JOIN 
@@ -195,12 +195,22 @@ in sea        :param ref: references to search website
             else:
                 res_dict = {"status": "success", "data": []}
                 for idx, i in enumerate(res.data, start=1):
-                    val, = i
-                    res_dict['data'].append({"option_value": F"option{idx}", "product_page_url": val})
+                    val1, val2 = i
+                    res_dict['data'].append({"option_value": F"option{idx}", "product_page_url": val1, "product_unique_url": val2})
+
         else:
             res_dict = {"status": "success", "data": [], "msg": "No Data Found"}
         logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}")
         return res_dict
+
+
+    def validate_test_result(self, res):
+        if res['data']:
+            for elem in res['data']:
+                logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
+                if not elem['product_unique_url'].startswith(elem['product_page_url']):
+                    return False
+        return True
 
     @property
     def tear_down(self):
