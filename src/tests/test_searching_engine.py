@@ -78,6 +78,6 @@ def test_search_results(search_client, test_name):
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res)
-    # check that the unique url link is correct among the other data
+    # check that unique url link is correct among the other data validation
     assert r == True, F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
 
