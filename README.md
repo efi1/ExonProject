@@ -27,12 +27,13 @@ The flow of the main functions of the major client reflects the business logic, 
   parameter_value (it refer to the references, keywords and seniority).
   
 - Before running the test:
-  - download it to your local environment.
-  -  Go to 'src' folder (cli) and run this setup process: python setup.py install
+  - clone it from Github to your local environment.
+  - Go to 'src' folder (cli) and run this setup process: python setup.py install
+    * you should run it while residing in the 'src' folder.
 
 - How to run the test?  
   - from cli: python -m pytest
-  - you should run it while being in the 'src' folder.
+    * you should run it while being in the 'src' folder.
 
 - I have only written a single automation test, which reflect the entire flow that described above.
 - I will add some more test soon.
