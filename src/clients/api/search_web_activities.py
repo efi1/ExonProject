@@ -202,21 +202,21 @@ in sea        :param ref: references to search website
         logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}")
         return res_dict
 
-    def validate_test_result(self, res: str, expexted: str) -> bool:
+    def validate_test_result(self, res: str, expected: str) -> bool:
         """
         validatation of test results
         :param res: actual results
-        :param expexted: expected results
+        :param expected: expected results
         :return: True if equals, False if not
         """
-        exp_data = expexted['results']['search_results']
+        exp_data = expected['results']['search_results']
         if res['data']:
             for idx, elem in enumerate(res['data']):
                 logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
                 if elem['product_page_url'] == exp_data[idx]['product_page_url']:
                     if not elem['product_unique_url'].startswith(elem['product_page_url']):
                         return False
-        elif res['data'] != expexted['results']['search_results']:
+        elif res['data'] != expected['results']['search_results']:
             return False
         return True
 
