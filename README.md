@@ -37,7 +37,7 @@ The flow of the main functions of the major client reflects the business logic, 
 
 - I have only written a single automation test, which reflects the entire flow that described above.
 - test's data resides ynder src/data/cfg_test folder.
-  
+- sql queries, table's data which is needed for the clients is resides under src.data.db_data.
   
 
   
