@@ -1,24 +1,11 @@
 import os
 import logging
-import re
 import secrets
 import sys
-
-from munch import DefaultMunch
-from importlib.resources import files
 from clients.db.data_base_client import DataBaseClient
 
-TEST_DATA_PTAH = 'data.cfg_tests'
-DB_DATA_PTAH = 'data.db_data'
-FILE_DEL_TABLES = 'tables_deletion.json'
-TABLE_CREATION_FILE = 'tables_creation.json'
-PRODUCTS_TABLE = 'products'
-PRODUCTS_FILE = 'db_products_insertion.json'
-RANKING_DATA = 'db_data_insertion.json'
-RANKING_PARAM_TABLE = 'ranking_parameters'
-DATA_JOBS_PATH = files('data.jobs_data').joinpath('to_be_inserted_into_ranking.txt')
-
 logging.getLogger()
+
 
 
 class SearchWebsiteActivities(DataBaseClient):
@@ -225,47 +212,3 @@ class SearchWebsiteActivities(DataBaseClient):
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output
 
-
-
-# if __name__ == '__main__':
-#     db_name = '../db/search_engine.db'
-    # db_path = files('src.clients.db').joinpath('search_engine.db')
-    # inst = SearchWebsiteActivities(db_path, DATA_JOBS_PATH)
-
-    # delete temp data file if exist
-    # if os.path.exists(inst.data_jobs_path):
-    #     os.unlink(inst.data_jobs_path)
-    # truncate tables
-    # inst.truncate_tables(['websites', 'websites_products', 'search_engine_ranking'])
-    # delete tables
-    # inst.delete_db_tables(DB_DATA_PTAH, FILE_DEL_TABLES)
-    # create tables
-    # inst.create_db_tables(DB_DATA_PTAH, TABLE_CREATION_FILE, force=True)
-    # inser reference data into ranking_parameters table
-    # inst.insert_ranking_parameters(RANKING_PARAM_TABLE, DB_DATA_PTAH, RANKING_DATA)
-    # run insert product job
-    # inst.insert_products_job(DB_DATA_PTAH, PRODUCTS_FILE, PRODUCTS_TABLE)
-    # insert_new_site_into_search_engine_api
-    # websites_insertion_d = DataBaseClient.load_json(files(TEST_DATA_PTAH).joinpath('test_search_results.json'))
-    # for website in websites_insertion_d['websites']:
-    #     res = inst.insert_new_site_into_search_engine_api(website['url'], website['product'], website['keywords'],
-    #                                                       website['seniority'], website['ref'])
-    # run update_ranking_job process
-    # res = inst.update_ranking_job()
-    # delete data file when update_ranking_job finishes
-    # inst.tear_down
-
-    # search term
-    # res = inst.get_search_term_options('leisure time')
-    # assert res['status'] == 'success', F"Error occurred {res['data']}"
-    # print(res)
-    #
-    # view the content of DB files
-    # query = [f'select * from websites_products order by website_id;', f'select * from websites order by id;',
-    #          f'select * from search_engine_ranking order by website_product_rel_id;']
-    # res = inst.exec_sql_queries(query, fetch_all=True)
-    # res = ''.join(res.data)
-    # pattern = r"[;|)|]"
-    # result = re.split(pattern, res)
-    # for i in result:
-    #     print(f'{i}')
