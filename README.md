@@ -42,6 +42,8 @@ The flow of the main functions of the major client reflects the business logic, 
     - sql queries, table's data which is needed for the clients is resides under src.data.db_data.
     - job_data folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api process (+api),
       and deleted when update_ranking_job process is finished.
+    - running log is created under src folder when running the test.
+    - both clients resides under src.client; src.clients.api - for the major client and src.clients.db for the db client.
   
 
   
