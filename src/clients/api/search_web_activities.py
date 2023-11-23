@@ -216,7 +216,7 @@ in sea        :param ref: references to search website
                 if elem['product_page_url'] == exp_data[idx]['product_page_url']:
                     if not elem['product_unique_url'].startswith(elem['product_page_url']):
                         return False
-        elif res['data'] != expected['results']['search_results']:
+        elif res['data'] != exp_data:
             return False
         return True
 
