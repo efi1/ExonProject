@@ -51,7 +51,7 @@ def preconditions_db_activities(client) -> object:
         client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
 
 
-@pytest.mark.parametrize('test_name', ['test_search_results', 'test_empty_keywords', 'test_duplicate_keywords'])
+@pytest.mark.parametrize('test_name', ['test_search_results_sorted_by_priority', 'test_empty_keywords', 'test_duplicate_keywords'])
 def test_search_results(search_client, test_name):
     """
     The test performing a search (by given a search term) will end with the correct results and with the right order,
