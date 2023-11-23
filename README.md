@@ -38,22 +38,22 @@ The flow of the main functions of the major client reflects the business logic, 
 - I have written a single automation test, which reflects the entire flow that described above.
 
 - Project structure:
-    - test's data resides ynder src/data/cfg_test folder.
-    - sql queries, table's data which is needed for the clients is resides under src.data.db_data.
-    - job_data folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api process (+api),
+    - test's data resides ynder **src/data/cfg_test** folder.
+    - sql queries, table's data which is needed for the clients is resides under **src.data.db_data**.
+    - **job_data** folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api process (+api),
       and deleted when update_ranking_job process is finished.
-    - running log is created under src folder when running the test.
-    - both clients resides under src.client; src.clients.api - for the major client and src.clients.db for the db client.
-    - tests and tests' configuration files (conftest.py, settings.py) are resides under src.tests folder.
-    - settings.py include all reqired parameters which are needed for the project and for its execution.
-    - two important params are is_delete_and_recreate_tables, is_truncate_tables. their values are True or False.
+    - running **log** is created under src folder when running the test.
+    - both clients resides under **src.client; src.clients.api** - for the major client and src.clients.db for the db client.
+    - tests and tests' configuration files (conftest.py, settings.py) are resides under **src.tests** folder.
+    - **settings.py** include all reqired parameters which are needed for the project and for its execution.
+    - two important params are **is_delete_and_recreate_tables, is_truncate_tables**. their values are True or False.
       If it is True, truncate (or deletion) will take place at the beginning of the run - before running the test.
       * at a first run, you may leave it as in their current state;
         is_delete_and_recreate_tables = True (remove all tables - if exist - and create new ones)
         is_truncate_tables = False (since currently the db is empty, there is no need to truncate the tables).
       * afterwords, you might want to change them to:
-        is_delete_and_recreate_tables = False
-        is_truncate_tables = True
+        **is_delete_and_recreate_tables** = False
+        **is_truncate_tables** = True
         these implies that only truncate occurs.
         it is relevant if you use the same input (test's input) for repeated iteration running.
         - you may leave it as it is, it is also okay.    
