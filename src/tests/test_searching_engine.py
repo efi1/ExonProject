@@ -36,16 +36,16 @@ def preconditions_db_activities(client) -> object:
     if settings.is_delete_updating_ranking_file:
         client.tear_down
     # if in settings, the tables are set to be removed
-    if settings.is_delete_and_recreate_tables == True:
+    if settings.is_delete_and_recreate_tables:
         client.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
         client.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
     # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
-    elif settings.is_truncate_tables == True:
+    elif settings.is_truncate_tables:
         deleted_tables_list = settings.table_list.split(',')
         client.truncate_tables(deleted_tables_list)
     # if tables were removed or truncated it needed to repopulate
     if any([settings.is_delete_and_recreate_tables, settings.is_truncate_tables]):
-        # insert refernce data to ranking_parameters as a precondition to running the tests.
+        # insert reference data to ranking_parameters as a precondition to running the tests.
         client.insert_ranking_parameters(settings.db_data_dir, settings.rank_insert_fn, settings.rank_tn)
         # run insert process job as a precondition to running the tests.
         client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)

@@ -79,7 +79,7 @@ class SearchWebsiteActivities(DataBaseClient):
         :param url: website url
         :param seniority: age of website in days
         :param keywords: search keywords which relevant to this website
-        :param ref: references to serach website
+in sea        :param ref: references to search website
         :return: website's unique url
         """
         logging.info(f'start {sys._getframe().f_code.co_name}')
