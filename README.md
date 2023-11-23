@@ -25,17 +25,7 @@ The flow of the main functions of the major client reflects the business logic, 
   Also, the result includes the 3 highest ranked websites, meaning the ones which is their total parameter_values are the highest in compare to
   other websites. This results take into account also the prioritiy of each of the website's elements which took place in the calculation of the
   parameter_value (it refer to the references, keywords and seniority).
-  
-- Before running the test:
-  - clone it from Github to your local environment.
-  - Go to 'src' folder (cli) and run this setup process: python setup.py install
-    * you should run it while residing in the 'src' folder.
 
-- How to run the test?  
-  - from cli: python -m pytest
-    * you should run it while being in the 'src' folder.
-
-- I have written a single automation test, which reflects the entire flow that described above.
 
 - Project structure:
     - test's data resides ynder **src/data/cfg_test** folder.
@@ -56,7 +46,18 @@ The flow of the main functions of the major client reflects the business logic, 
         **is_truncate_tables** = True
         these implies that only truncate occurs.
         it is relevant if you use the same input (test's input) for repeated iteration running.
-        - you may leave it as it is, it is also okay.    
+        - you may leave it as it is, it is also okay.
+
+- Before running the test:
+  - clone it from Github to your local environment.
+  - Go to 'src' folder (cli) and run this setup process: python setup.py install
+    * you should run it while residing in the 'src' folder.
+
+- How to run the test?  
+  - from cli: python -m pytest
+    * you should run it while being in the 'src' folder.
+
+- I have written a single automation test, which reflects the entire flow that described above.
       
   
 
