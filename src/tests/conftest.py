@@ -36,12 +36,23 @@ def cfg_data(test_name: str) -> dict:
 def search_client() -> object:
     """
     instantiate the search_client
-    also Truncate, Delete, Create, Insert tables by request as a prerequisite to the test running
     :return: client instant
     """
     db_path = files(settings.db_client_dir).joinpath(settings.db_name)
     data_jobs_path = files(settings.data_jobs_dir).joinpath(settings.data_jobs_fn)
     search_client = SearchWebsiteActivities(db_path, data_jobs_path)
+    yield search_client
+    # delete the file which uses to save websites_products.id list for updating search_engine_ranking table
+    search_client.tear_down
+
+
+@fixture(scope="function")
+def tests_preconditions(search_client) -> object:
+    """
+    Preconditioned activities to be run (on request) before *each* test is run.
+    (Truncate, Delete, Create, Insert)
+    :param search_client: api client
+    """
     # if in settings, the tables are set to be removed
     if settings.is_delete_and_recreate_tables == True:
         search_client.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
@@ -56,6 +67,3 @@ def search_client() -> object:
         search_client.insert_ranking_parameters(settings.db_data_dir, settings.rank_insert_fn, settings.rank_tn)
         # run insert process job as a precondition to running the tests.
         search_client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
-    yield search_client
-    # delete the file which uses to save websites_products.id list for updating search_engine_ranking table
-    search_client.tear_down
