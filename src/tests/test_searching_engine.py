@@ -39,7 +39,7 @@ def preconditions_db_activities(client) -> object:
     if settings.is_delete_and_recreate_tables == True:
         client.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
         client.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
-    # by default the table are truncated for every run - can be changed in the settings module (src.tests.settings)
+    # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
     elif settings.is_truncate_tables == True:
         deleted_tables_list = settings.table_list.split(',')
         client.truncate_tables(deleted_tables_list)
