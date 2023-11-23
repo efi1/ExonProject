@@ -64,7 +64,7 @@ def test_search_results(search_client, test_name):
     # insert to product job has already ran during setup (see tests.contest)
 
     # clean DB or delete database and then create it - depends on settings.py values:
-    # is_delete_and_recreate_tables, is_truncate_tables = True
+    # is_delete_and_recreate_tables, is_truncate_tables
     preconditions_db_activities(search_client)
 
     # insert_new_site_into_search_engine_api
