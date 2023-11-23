@@ -96,6 +96,14 @@ class SearchWebsiteActivities(DataBaseClient):
         :return: website's unique url
         """
         logging.info(f'start {sys._getframe().f_code.co_name}')
+        if not all([url, product, keywords, seniority]):
+            logging.info(f'{sys._getframe().f_code.co_name} existing at beginning - missing api input - no tables '
+                         f'update made')
+            return
+        if not keywords:
+            logging.info(f'{sys._getframe().f_code.co_name} existing at beginning - missing api input - no tables '
+                         f'update made')
+            return
         unique_url = F"{url}token={secrets.token_urlsafe()}"
         query = F"insert into websites (url) values ('{url}');"
         self.exec_sql_query(query, fetch_all=False, commit=True)
@@ -129,14 +137,14 @@ class SearchWebsiteActivities(DataBaseClient):
         :return: an object with success or error status
         """
         logging.info(f'in {sys._getframe(  ).f_code.co_name}')
-        search_engine_ranking_col = "website_product_rel_id, parameter_id, parameter_value, parameter_grade"
-        query = "select * from ranking_parameters;"
-        res = self.exec_sql_query(query)
-        for row in res.data:
-            setattr(self, F"r_{row[1]}_id", row[0])  # parameter_id field
-            setattr(self, F"r_{row[1]}_priority", row[2])  # parameter priority
-            setattr(self, F"r_{row[1]}_grade", row[3])  # parameter_grade field
         if os.path.exists(self.data_jobs_path):
+            search_engine_ranking_col = "website_product_rel_id, parameter_id, parameter_value, parameter_grade"
+            query = "select * from ranking_parameters;"
+            res = self.exec_sql_query(query)
+            for row in res.data:
+                setattr(self, F"r_{row[1]}_id", row[0])  # parameter_id field
+                setattr(self, F"r_{row[1]}_priority", row[2])  # parameter priority
+                setattr(self, F"r_{row[1]}_grade", row[3])  # parameter_grade field
             with open(self.data_jobs_path, 'r') as rank_file:
                 lines = rank_file.readlines()
                 print(lines)
@@ -167,10 +175,11 @@ class SearchWebsiteActivities(DataBaseClient):
                     res = self.exec_sql_query(query)
         else:
             logging.info('update ranking - found no new websites to update')
-            message = "update ranking - found no new websites to update"
+            message = 'No Data Found'
         message = message if locals().get('message') else "update_ranking_job succeeded"
         logging.info(message)
-        return DefaultMunch.fromDict({"status": "success", "data": [], "msg": message})
+        return {"status": "success", "data": [], "msg": message}
+
 
     def get_search_term_options(self, search_term):
         logging.info(f'in {sys._getframe().f_code.co_name}')
