@@ -7,7 +7,6 @@ from clients.db.data_base_client import DataBaseClient
 logging.getLogger()
 
 
-
 class SearchWebsiteActivities(DataBaseClient):
     def __init__(self, db_path, data_jobs_path):
         super().__init__(db_path)
@@ -123,7 +122,7 @@ in sea        :param ref: references to search website
         for each parameter (references, keywords and seniority)
         :return: an object with success or error status
         """
-        logging.info(f'in {sys._getframe(  ).f_code.co_name}')
+        logging.info(f'in {sys._getframe().f_code.co_name}')
         if os.path.exists(self.data_jobs_path):
             search_engine_ranking_col = "website_product_rel_id, parameter_id, parameter_value, parameter_grade"
             query = "select * from ranking_parameters;"
@@ -167,7 +166,6 @@ in sea        :param ref: references to search website
         logging.info(message)
         return {"status": "success", "data": [], "msg": message}
 
-
     def get_search_term_options(self, search_term):
         logging.info(f'in {sys._getframe().f_code.co_name}')
         query_url = F"""
@@ -196,20 +194,30 @@ in sea        :param ref: references to search website
                 res_dict = {"status": "success", "data": []}
                 for idx, i in enumerate(res.data, start=1):
                     val1, val2 = i
-                    res_dict['data'].append({"option_value": F"option{idx}", "product_page_url": val1, "product_unique_url": val2})
+                    res_dict['data'].append(
+                        {"option_value": F"option{idx}", "product_page_url": val1, "product_unique_url": val2})
 
         else:
             res_dict = {"status": "success", "data": [], "msg": "No Data Found"}
         logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}")
         return res_dict
 
-
-    def validate_test_result(self, res):
+    def validate_test_result(self, res: str, expexted: str) -> bool:
+        """
+        validatation of test results
+        :param res: actual results
+        :param expexted: expected results
+        :return: True if equals, False if not
+        """
+        exp_data = expexted['results']['search_results']
         if res['data']:
-            for elem in res['data']:
+            for idx, elem in enumerate(res['data']):
                 logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
-                if not elem['product_unique_url'].startswith(elem['product_page_url']):
-                    return False
+                if elem['product_page_url'] == exp_data[idx]['product_page_url']:
+                    if not elem['product_unique_url'].startswith(elem['product_page_url']):
+                        return False
+        elif res['data'] != expexted['results']['search_results']:
+            return False
         return True
 
     @property
@@ -221,4 +229,3 @@ in sea        :param ref: references to search website
             output['msg'] = 'No file Found'
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output
-
