@@ -9,6 +9,7 @@ src/clients/__pycache__/
 src/utils/__pycache__/
 src/ExonProject.egg-info/
 src/clients/api/__pycache__/
+src/clients/db/__pycache__/
 src/tests/__pycache__/
 logs
 ./logfile.log
