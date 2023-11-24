@@ -197,9 +197,10 @@ in sea        :param ref: references to search website
                     val1, val2 = i
                     res_dict['data'].append(
                         {"option_value": F"option{idx}", "product_page_url": val1, "product_unique_url": val2})
+                    res_dict['msg'] = 'Data Found'
         else:
             res_dict = {"status": "success", "data": [], "msg": "No Data Found"}
-        logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}")
+        logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}, msg: {res_dict['msg']}")
         return res_dict
 
     def validate_test_result(self, res: str, expected: str) -> bool:
