@@ -12,8 +12,8 @@ data_jobs_fn = 'to_be_inserted_into_ranking.txt'
 data_jobs_dir = 'data.jobs_data'
 table_list = "websites, products, websites_products, search_engine_ranking, ranking_parameters"
 is_delete_updating_ranking_file = True
-is_delete_and_recreate_tables = False
-is_truncate_tables = True
+is_delete_and_recreate_tables = True
+is_truncate_tables = False
 
 
 
