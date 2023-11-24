@@ -14,9 +14,9 @@ The flow of the main functions of the major client reflects the business logic, 
      into the website table as well into a common table (for both products and websites).
   * all the common id-s from the common table (websites_products) are written together with another given input - seniority - into a file.
 - update_ranking_job -> is responsible to update the search_engine_ranking table with the values of the website insertion data.
-    - it reads the file, which is created in the former process (in the insert_new_site_into_search_engine_api)  and mentioned before.
+    - it reads the file, which is created in the former process (in the insert_new_site_into_search_engine_api)  as mentioned before.
     - it updates then the search_engine_ranking with the websites_products with its content.
-    - it calculated the parameter_value for each insertion given input - keywords, seniority and references.
+    - it calculates the parameter_value for each insertion given input - keywords, seniority and references.
     - finally, for each website, which represented by the website_product_rel_id, there are 3 entries (for each of the above-mentioned inputs).
       each entry will have its calculated value.
     - these 3 records can be sumed up (parameter_values) and can be ranked in compare tp all other entries.
