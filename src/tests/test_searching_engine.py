@@ -69,19 +69,17 @@ def test_search_results(search_client, test_name):
 
     # insert_new_site_into_search_engine_api
     cfg_data = cfg_get_data(test_name)
-    for opt_idx, website in enumerate(cfg_data['websites']):
-        res = search_client.insert_new_site_into_search_engine_api(website['url'], website['product'],
-                                                                   website['keywords'],
-                                                                   website['seniority'], website['ref'])
-        expected_url = (cfg_data['results']['insertion_results'][opt_idx]['url'])
-        assert res.startswith(expected_url) == True if res else res == expected_url, \
-            F"wrong unique url returned, expected: starts with {expected_url}, actual: {res}"
-    # run update_ranking_job process
+    unique_url_l = [{"product_unique_url": search_client.insert_new_site_into_search_engine_api(website['url'], website['product'],
+                                                                         website['keywords'], website['seniority'],
+                                                                         website['ref'])} for opt_idx,
+                                                                            website in enumerate(cfg_data['websites'])]
+    r = search_client.validate_test_result({"data": unique_url_l}, cfg_data, 'insertion_results')
+    assert r == True, F"wrong results; expected: {cfg_data['results']['insertion_results']}, actual: {unique_url_l}"
     res = search_client.update_ranking_job
     assert res == cfg_data['results'][
-        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
+        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']['search_results']}, actual: {res['data']}"
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
-    r = search_client.validate_test_result(res, cfg_data)
+    r = search_client.validate_test_result(res, cfg_data, 'search_results')
     # check that unique url link is correct among the other data validation
-    assert r == True, F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
+    assert r == True, F"wrong results; expected: {cfg_data['results']['search_results']}, actual: {res['data']}"

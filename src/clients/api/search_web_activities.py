@@ -203,21 +203,25 @@ in sea        :param ref: references to search website
         logging.info(F"{sys._getframe().f_code.co_name} finished, status: {res_dict['status']}, msg: {res_dict['msg']}")
         return res_dict
 
-    def validate_test_result(self, res: str, expected: str) -> bool:
+    def validate_test_result(self, res: dict, expected: dict, results_type: str) -> bool:
         """
         validatation of test results
         :param res: actual results
         :param expected: expected results
+        :param results_type: type of results as specified in the cfg test input file
         :return: True if equals, False if not
         """
-        exp_data = expected['results']['search_results']
+        exp_data = expected['results'][results_type]
         if res['data']:
             if len(res['data']) == len(exp_data):
                 for idx, elem in enumerate(res['data']):
                     logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
-                    if elem['product_page_url'] == exp_data[idx]['product_page_url']:
-                        if not elem['product_unique_url'].startswith(elem['product_page_url']):
+                    exp_elem = expected['results'][results_type][idx]['product_page_url']
+                    if elem['product_unique_url']:
+                        if not elem['product_unique_url'].startswith(expected['results'][results_type][idx]['product_page_url']):
                             return False
+                    elif elem['product_unique_url'] != exp_elem:
+                        return False
         elif res['data'] != exp_data:
             return False
         return True
