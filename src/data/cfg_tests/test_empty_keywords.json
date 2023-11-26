@@ -10,6 +10,9 @@
 		}
     ],
   "results": {
+    "insertion_results": [
+			{"url": null}
+		],
     "search_results": [],
     "ranking_job_result": {
       "status": "success",

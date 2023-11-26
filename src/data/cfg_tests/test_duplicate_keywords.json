@@ -56,6 +56,13 @@
 		}
 	],
 	"results": {
+		"insertion_results": [
+			{"url": "www.aliexpress.com"},
+			{"url": "www.ozon.ru"},
+			{"url": "www.similarweb.com/01/website/taobao.com"},
+			{"url": null},
+			{"url": "www.googlestore.com"}
+		],
 		"search_results": [
 			{
 				"option_value": "option1",

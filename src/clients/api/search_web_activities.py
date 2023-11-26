@@ -212,11 +212,12 @@ in sea        :param ref: references to search website
         """
         exp_data = expected['results']['search_results']
         if res['data']:
-            for idx, elem in enumerate(res['data']):
-                logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
-                if elem['product_page_url'] == exp_data[idx]['product_page_url']:
-                    if not elem['product_unique_url'].startswith(elem['product_page_url']):
-                        return False
+            if len(res['data']) == len(exp_data):
+                for idx, elem in enumerate(res['data']):
+                    logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
+                    if elem['product_page_url'] == exp_data[idx]['product_page_url']:
+                        if not elem['product_unique_url'].startswith(elem['product_page_url']):
+                            return False
         elif res['data'] != exp_data:
             return False
         return True

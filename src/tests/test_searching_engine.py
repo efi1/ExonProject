@@ -41,7 +41,7 @@ def preconditions_db_activities(client) -> object:
         client.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
     # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
     elif settings.is_truncate_tables:
-        deleted_tables_list = settings.table_list.split(',')
+        deleted_tables_list = settings.tables_list.split(',')
         client.truncate_tables(deleted_tables_list)
     # if tables were removed or truncated it needed to repopulate
     if any([settings.is_delete_and_recreate_tables, settings.is_truncate_tables]):
@@ -69,9 +69,11 @@ def test_search_results(search_client, test_name):
 
     # insert_new_site_into_search_engine_api
     cfg_data = cfg_get_data(test_name)
-    for website in cfg_data['websites']:
-        search_client.insert_new_site_into_search_engine_api(website['url'], website['product'], website['keywords'],
+    for opt_idx, website in enumerate(cfg_data['websites']):
+        res = search_client.insert_new_site_into_search_engine_api(website['url'], website['product'], website['keywords'],
                                                           website['seniority'], website['ref'])
+        expected_url = (cfg_data['results']['insertion_results'][opt_idx]['url'])
+        assert res.startswith(expected_url) == True if res else res == expected_url, F"wrong unique url returned"
     # run update_ranking_job process
     res = search_client.update_ranking_job
     assert res == cfg_data['results']['ranking_job_result'], F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
