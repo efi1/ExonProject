@@ -74,6 +74,7 @@ def test_search_results(search_client, test_name):
                                                                          website['ref'])} for opt_idx,
                                                                             website in enumerate(cfg_data['websites'])]
     r = search_client.validate_test_result({"data": unique_url_l}, cfg_data, 'insertion_results')
+    # validate that the retrieved url is as expected
     assert r == True, F"wrong results; expected: {cfg_data['results']['insertion_results']}, actual: {unique_url_l}"
     res = search_client.update_ranking_job
     assert res == cfg_data['results'][
@@ -81,5 +82,5 @@ def test_search_results(search_client, test_name):
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res, cfg_data, 'search_results')
-    # check that unique url link is correct among the other data validation
+    # check that the search results order is correct as well as the retrieved unique url
     assert r == True, F"wrong results; expected: {cfg_data['results']['search_results']}, actual: {res['data']}"
