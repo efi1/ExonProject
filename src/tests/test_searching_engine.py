@@ -5,7 +5,6 @@ from tests import settings
 from importlib.resources import files
 
 
-
 def load_test_params(path):
     with open(path) as file:
         data = json.loads(file.read())
@@ -51,7 +50,8 @@ def preconditions_db_activities(client) -> object:
         client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
 
 
-@pytest.mark.parametrize('test_name', ['test_search_results_sorted_by_priority', 'test_empty_keywords', 'test_duplicate_keywords'])
+@pytest.mark.parametrize('test_name',
+                         ['test_search_results_sorted_by_priority', 'test_empty_keywords', 'test_duplicate_keywords'])
 def test_search_results(search_client, test_name):
     """
     The test performing a search (by given a search term) will end with the correct results and with the right order,
@@ -70,16 +70,18 @@ def test_search_results(search_client, test_name):
     # insert_new_site_into_search_engine_api
     cfg_data = cfg_get_data(test_name)
     for opt_idx, website in enumerate(cfg_data['websites']):
-        res = search_client.insert_new_site_into_search_engine_api(website['url'], website['product'], website['keywords'],
-                                                          website['seniority'], website['ref'])
+        res = search_client.insert_new_site_into_search_engine_api(website['url'], website['product'],
+                                                                   website['keywords'],
+                                                                   website['seniority'], website['ref'])
         expected_url = (cfg_data['results']['insertion_results'][opt_idx]['url'])
-        assert res.startswith(expected_url) == True if res else res == expected_url, F"wrong unique url returned"
+        assert res.startswith(expected_url) == True if res else res == expected_url, \
+            F"wrong unique url returned, expected: starts with {expected_url}, actual: {res}"
     # run update_ranking_job process
     res = search_client.update_ranking_job
-    assert res == cfg_data['results']['ranking_job_result'], F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
+    assert res == cfg_data['results'][
+        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res, cfg_data)
     # check that unique url link is correct among the other data validation
     assert r == True, F"wrong results; expected: {cfg_data['result']}, actual: {res['data']}"
-
