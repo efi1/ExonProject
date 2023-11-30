@@ -8,6 +8,7 @@ products_tn = 'products'
 products_insert_fn = 'db_products_insertion.json'
 rank_insert_fn = 'db_data_insertion.json'
 rank_tn = 'ranking_parameters'
+search_query_fn = 'db_search_query.txt'
 data_jobs_fn = 'to_be_inserted_into_ranking.txt'
 data_jobs_dir = 'data.jobs_data'
 tables_list = "websites, products, websites_products, search_engine_ranking, ranking_parameters"

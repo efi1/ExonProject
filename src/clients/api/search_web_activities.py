@@ -2,6 +2,8 @@ import os
 import logging
 import secrets
 import sys
+from importlib.resources import files
+
 from clients.db.data_base_client import DataBaseClient
 
 logging.getLogger()
@@ -83,11 +85,11 @@ in sea        :param ref: references to search website
         """
         logging.info(f'start {sys._getframe().f_code.co_name}')
         if not all([url, product, keywords, seniority]):
-            logging.info(f'{sys._getframe().f_code.co_name} existing at beginning - missing api input - no tables '
+            logging.info(f'{sys._getframe().f_code.co_name} existing when start - missing all api input - no tables '
                          f'update made')
             return
         if not keywords:
-            logging.info(f'{sys._getframe().f_code.co_name} existing at beginning - missing api input - no tables '
+            logging.info(f'{sys._getframe().f_code.co_name} existing when start - missing keywords api input - no tables '
                          f'update made')
             return
         token = secrets.token_urlsafe()
@@ -167,24 +169,11 @@ in sea        :param ref: references to search website
         logging.info(message)
         return {"status": "success", "data": [], "msg": message}
 
-    def get_search_term_options(self, search_term):
+    def get_search_term_options(self, search_term, query_dir, query_fn):
         logging.info(f'in {sys._getframe().f_code.co_name}')
-        query_url = F"""
-                    SELECT ws.URL, wp.unique_url --, rnk.website_product_rel_id, rnk.SumVal,rnk.MaxGradeAndValue
-                    FROM websites ws
-                    INNER JOIN websites_products wp on ws.id=wp.website_id
-                    INNER JOIN 
-                        (SELECT id FROM products WHERE keywords like '%{search_term},%' )pr 
-                        on wp.product_id=pr.id
-                            INNER JOIN ( SELECT website_product_rel_id, sum(parameter_value)   as SumVal,
-                                          max(parameter_grade*10000000+parameter_value) as MaxGradeAndValue
-                            FROM search_engine_ranking
-                            GROUP BY website_product_rel_id                                              
-                        )rnk 
-                    on wp.id=rnk.website_product_rel_id
-                    ORDER BY rnk.SumVal desc,rnk.MaxGradeAndValue desc limit 3;
-                    """
-
+        file_path = files(query_dir).joinpath(query_fn)
+        with open(file_path, 'r') as file:
+            query_url = file.read()
         # a special case of a response parsing which refers to this function only, therefore not in data_base_client
         res = self.exec_sql_query(query_url, fetch_all=True, raise_error=False)
         if res.data:

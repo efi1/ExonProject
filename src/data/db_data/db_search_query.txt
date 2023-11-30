@@ -1,0 +1,15 @@
+
+                    SELECT ws.URL, wp.unique_url --, rnk.website_product_rel_id, rnk.SumVal,rnk.MaxGradeAndValue
+                    FROM websites ws
+                    INNER JOIN websites_products wp on ws.id=wp.website_id
+                    INNER JOIN 
+                        (SELECT id FROM products WHERE keywords like '%leisure time,%' )pr 
+                        on wp.product_id=pr.id
+                            INNER JOIN ( SELECT website_product_rel_id, sum(parameter_value)   as SumVal,
+                                          max(parameter_grade*10000000+parameter_value) as MaxGradeAndValue
+                            FROM search_engine_ranking
+                            GROUP BY website_product_rel_id                                              
+                        )rnk 
+                    on wp.id=rnk.website_product_rel_id
+                    ORDER BY rnk.SumVal desc,rnk.MaxGradeAndValue desc limit 3;
+                    
