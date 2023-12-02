@@ -172,8 +172,8 @@ class SearchWebsiteActivities(DataBaseClient):
                     ({search_engine_ranking_col}) values ({website_products_id}, {self.r_seniority_id}, 
                     {self.r_seniority_grade * int(seniority)}, {self.r_seniority_grade});"""
                     res = self.exec_sql_query(query, fetch_all=False)
-                    query = F"""select keywords, ref from websites_products as w join products as p 
-                                on w.product_id = p.id where w.id = {website_products_id};"""
+                    query = F"""select keywords, ref from websites_products as wp join products as p 
+                                on wp.product_id = p.id where wp.id = {website_products_id};"""
                     res = self.exec_sql_query(query, fetch_all=False)
                     if res.data is None:
                         logging.info(F"cannot find website_products_id = {website_products_id} in {self.data_jobs_path}"
