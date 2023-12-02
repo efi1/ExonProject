@@ -2,7 +2,7 @@ import os
 import logging
 import secrets
 import sys
-import settings
+from importlib.resources import files
 from importlib.resources import read_text
 from clients.db.data_base_client import DataBaseClient
 
@@ -10,22 +10,23 @@ logging.getLogger()
 
 
 class SearchWebsiteActivities(DataBaseClient):
-    def __init__(self, db_path, data_jobs_path):
+    def __init__(self, **kwargs):
+        db_path = files(kwargs['db_client_dir']).joinpath(kwargs['db_name'])
         super().__init__(db_path)
-        self.data_jobs_path = data_jobs_path
+        self.db_data_dir = kwargs['db_data_dir']
+        self.table_del_fn = kwargs['table_del_fn']
+        self.table_creation_fn = kwargs['table_creation_fn']
+        self.products_tn = kwargs['products_tn']
+        self.products_insert_fn = kwargs['products_insert_fn']
+        self.rank_insert_fn = kwargs['rank_insert_fn']
+        self.rank_tn = kwargs['rank_tn']
+        self.data_jobs_fn = kwargs['data_jobs_fn']
+        self.tables_list = kwargs['tables_list']
+        self.is_delete_updating_ranking_file = kwargs['is_delete_updating_ranking_file']
+        self.is_delete_and_recreate_tables = kwargs['is_delete_and_recreate_tables']
+        self.is_truncate_tables = kwargs['is_truncate_tables']
+        self.data_jobs_path = files(kwargs['db_client_dir']).joinpath(self.data_jobs_fn)
 
-    def insert_products_job(self, json_dir: str, json_fn: str, table_name: str) -> object:
-        """
-        insert data (products, keywords) into products table using data_base_client.insert_into_table api (function)
-        :param table_name: the table for the data to b inserted into - default is product table.
-        :param json_dir: json folder location
-        :param json_fn: json file name
-        :return: an object with success or error status
-        """
-        logging.info(f'{sys._getframe().f_code.co_name} started')
-        res = self.insert_into_table(json_dir, json_fn, table_name=table_name)
-        logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
-        return res
 
     def delete_db_tables(self, json_dir: str, json_fn: str,
                          force: bool = False) -> object:
@@ -65,7 +66,8 @@ class SearchWebsiteActivities(DataBaseClient):
         logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
-    def insert_ranking_parameters(self, json_dir, json_fn, table_name) -> object:
+    @property
+    def insert_ranking_parameters(self) -> dict:
         """
         insert ref data into ranking_parameters table using data_base_client.insert_into_table api (function)
         :param table_name: the table for the data to b inserted into.
@@ -73,9 +75,29 @@ class SearchWebsiteActivities(DataBaseClient):
         :return: an object with success or error status
         """
         logging.info(f'{sys._getframe().f_code.co_name} started')
-        res = self.insert_into_table(json_dir, json_fn, table_name=table_name)
-        logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
-        return res
+        output = {"status": "success", "data": f'{self.rank_tn}', "msg": ""}
+        if any([self.is_delete_and_recreate_tables, self.is_truncate_tables]):
+            res = self.insert_into_table(self.db_data_dir, self.rank_insert_fn, table_name=self.rank_tn)
+        output['msg'] = res['status']
+        logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
+        return output
+
+    @property
+    def insert_products_job(self) -> dict:
+        """
+        insert data (products, keywords) from a file into products table using data_base_client.insert_into_table api (function)
+        :param table_name: the table for the data to b inserted into - default is product table.
+        :param json_dir: json folder location
+        :param json_fn: json file name
+        :return: an object with success or error status
+        """
+        logging.info(f'{sys._getframe().f_code.co_name} started')
+        output = {"status": "success", "data": f'{self.products_tn}', "msg": ""}
+        if any([self.is_delete_and_recreate_tables, self.is_truncate_tables]):
+            res = self.insert_into_table(self.db_data_dir, self.products_insert_fn, table_name=self.products_tn)
+        output['msg'] = res['status']
+        logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
+        return output
 
     def insert_new_site_into_search_engine_api(self, url: str, product: str, keywords: dict, seniority: int,
                                                ref: int = 0) -> str:
@@ -223,28 +245,20 @@ class SearchWebsiteActivities(DataBaseClient):
     def tear_down(self):
         logging.info(f'{sys._getframe().f_code.co_name} started')
         output = {"status": "success", "data": f'{self.data_jobs_path}', "msg": {"delete_update_rank_file": F"file deleted successfully", "db_tables": []}}
-        if settings.is_delete_updating_ranking_file:
+        if self.is_delete_updating_ranking_file:
             if os.path.exists(self.data_jobs_path):
                 os.unlink(self.data_jobs_path)
             else:
                 output['msg']['delete_update_rank_file'] = 'No file Found'
         # if in settings, the tables are set to be removed
-        if settings.is_delete_and_recreate_tables:
-            self.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
-            self.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
+        if self.is_delete_and_recreate_tables:
+            self.delete_db_tables(self.db_data_dir, self.table_del_fn, force=False)
+            self.create_db_tables(self.db_data_dir, self.table_creation_fn, force=True)
             output['msg']['db_tables'].append('tables deleted and recreated successfully')
         # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
-        elif settings.is_truncate_tables:
-            deleted_tables_list = settings.tables_list.split(',')
+        elif self.is_truncate_tables:
+            deleted_tables_list = self.tables_list.split(',')
             self.truncate_tables(deleted_tables_list)
             output['msg']['db_tables'].append('tables truncated successfully')
-        # if tables were removed or truncated it needed to repopulate
-        if any([settings.is_delete_and_recreate_tables, settings.is_truncate_tables]):
-            # insert reference data to ranking_parameters as a precondition to running the tests.
-            self.insert_ranking_parameters(settings.db_data_dir, settings.rank_insert_fn, settings.rank_tn)
-            output['msg']['db_tables'].append('entries inserted into ranking_parameters')
-            # run insert process job as a precondition to running the tests.
-            self.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
-            output['msg']['db_tables'].append('entries inserted into rproducts')
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output
