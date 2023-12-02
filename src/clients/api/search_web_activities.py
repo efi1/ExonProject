@@ -3,7 +3,6 @@ import logging
 import secrets
 import sys
 from importlib.resources import files
-
 from clients.db.data_base_client import DataBaseClient
 
 logging.getLogger()
