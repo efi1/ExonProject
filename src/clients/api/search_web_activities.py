@@ -2,6 +2,7 @@ import os
 import logging
 import secrets
 import sys
+import settings
 from importlib.resources import read_text
 from clients.db.data_base_client import DataBaseClient
 
@@ -21,8 +22,9 @@ class SearchWebsiteActivities(DataBaseClient):
         :param json_fn: json file name
         :return: an object with success or error status
         """
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         res = self.insert_into_table(json_dir, json_fn, table_name=table_name)
-        logging.info(f'{sys._getframe().f_code.co_name} finished')
+        logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
     def delete_db_tables(self, json_dir: str, json_fn: str,
@@ -34,13 +36,14 @@ class SearchWebsiteActivities(DataBaseClient):
         :param force: to delete if tables exist
         :return: an object with data that contains the number of exist tables
         """
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         res = self.count_tables()
         logging.info(F"number of table at starting point: {res} table/s already exist")
         if force or res.data > 0:
             self.exec_sql_queries(json_dir=json_dir, json_fn=json_fn, fetch_all=False)
             res = self.count_tables()
             logging.info(F"after table deletion: {res} table/s already exist")
-        logging.info(f'{sys._getframe().f_code.co_name} finished')
+        logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
     def create_db_tables(self, json_dir: str, json_fn: str,
@@ -52,12 +55,13 @@ class SearchWebsiteActivities(DataBaseClient):
         :param force: to create also if already exist
         :return: an object with data that contains the number of created tables
         """
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         res = self.count_tables()
         logging.info(F"number of table at starting point: {res} table/s already exist")
         if force or res.data == 0:
             self.exec_sql_queries(json_fn=json_fn, json_dir=json_dir, fetch_all=False)
             res = self.count_tables()
-            logging.info(F"after table deletion: {res} table/s already exist")
+            logging.info(F"after table deletion: {res} table/s exist")
         logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
@@ -68,8 +72,9 @@ class SearchWebsiteActivities(DataBaseClient):
         :param json_fn: data file name
         :return: an object with success or error status
         """
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         res = self.insert_into_table(json_dir, json_fn, table_name=table_name)
-        logging.info(f'{sys._getframe().f_code.co_name} finished')
+        logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
     def insert_new_site_into_search_engine_api(self, url: str, product: str, keywords: dict, seniority: int,
@@ -82,9 +87,9 @@ class SearchWebsiteActivities(DataBaseClient):
         :param ref: references to search website
         :return: website's unique url
         """
-        logging.info(f'start {sys._getframe().f_code.co_name}')
+        logging.info(f'{sys._getframe().f_code.co_name} job started')
         if not all([url, product, keywords, seniority]):
-            logging.info(f'{sys._getframe().f_code.co_name} existing when start - missing all api input - no tables '
+            logging.info(f'{sys._getframe().f_code.co_name} existing on starting - missing all api input - no tables '
                          f'update made')
             return
         if not keywords:
@@ -115,7 +120,7 @@ class SearchWebsiteActivities(DataBaseClient):
                 websites_products_id, = res.data
                 with open(self.data_jobs_path, "a+") as tmp_rank_fn:
                     tmp_rank_fn.write(f'{websites_products_id} {seniority}\n')
-        logging.info(f'{sys._getframe().f_code.co_name} finished')
+        logging.info(f'{sys._getframe().f_code.co_name} job finished')
         return unique_url
 
     @property
@@ -125,7 +130,7 @@ class SearchWebsiteActivities(DataBaseClient):
         for each parameter (references, keywords and seniority)
         :return: an object with success or error status
         """
-        logging.info(f'in {sys._getframe().f_code.co_name}')
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         if os.path.exists(self.data_jobs_path):
             search_engine_ranking_col = "website_product_rel_id, parameter_id, parameter_value, parameter_grade"
             query = "select * from ranking_parameters;"
@@ -170,7 +175,7 @@ class SearchWebsiteActivities(DataBaseClient):
         return {"status": "success", "data": [], "msg": message}
 
     def get_search_term_options(self, search_term, query_dir, query_fn):
-        logging.info(f'in {sys._getframe().f_code.co_name}')
+        logging.info(f'{sys._getframe().f_code.co_name} started')
         query_url = read_text(query_dir, query_fn)
         # a special case of a response parsing which refers to this function only, therefore not in data_base_client
         res = self.exec_sql_query(query_url, fetch_all=True, raise_error=False)
@@ -216,10 +221,30 @@ class SearchWebsiteActivities(DataBaseClient):
 
     @property
     def tear_down(self):
-        output = {"status": "success", "data": f'{self.data_jobs_path}', "msg": F"file deleted successfully"}
-        if os.path.exists(self.data_jobs_path):
-            os.unlink(self.data_jobs_path)
-        else:
-            output['msg'] = 'No file Found'
+        logging.info(f'{sys._getframe().f_code.co_name} started')
+        output = {"status": "success", "data": f'{self.data_jobs_path}', "msg": {"delete_update_rank_file": F"file deleted successfully", "db_tables": []}}
+        if settings.is_delete_updating_ranking_file:
+            if os.path.exists(self.data_jobs_path):
+                os.unlink(self.data_jobs_path)
+            else:
+                output['msg']['delete_update_rank_file'] = 'No file Found'
+        # if in settings, the tables are set to be removed
+        if settings.is_delete_and_recreate_tables:
+            self.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
+            self.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
+            output['msg']['db_tables'].append('tables deleted and recreated successfully')
+        # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
+        elif settings.is_truncate_tables:
+            deleted_tables_list = settings.tables_list.split(',')
+            self.truncate_tables(deleted_tables_list)
+            output['msg']['db_tables'].append('tables truncated successfully')
+        # if tables were removed or truncated it needed to repopulate
+        if any([settings.is_delete_and_recreate_tables, settings.is_truncate_tables]):
+            # insert reference data to ranking_parameters as a precondition to running the tests.
+            self.insert_ranking_parameters(settings.db_data_dir, settings.rank_insert_fn, settings.rank_tn)
+            output['msg']['db_tables'].append('entries inserted into ranking_parameters')
+            # run insert process job as a precondition to running the tests.
+            self.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
+            output['msg']['db_tables'].append('entries inserted into rproducts')
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output

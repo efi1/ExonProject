@@ -24,31 +24,6 @@ def cfg_get_data(test_name: str) -> dict:
         return _load_test_params(cfg_template_file)
 
 
-def preconditions_db_activities(client) -> object:
-    """
-    Preconditioned activities to be run (on request) before *each* test is run.
-    (Truncate, Delete, Create, Insert)
-    :param search_client: api client
-    """
-    # delete the file which uses to save websites_products.id list for updating search_engine_ranking table
-    if settings.is_delete_updating_ranking_file:
-        client.tear_down
-    # if in settings, the tables are set to be removed
-    if settings.is_delete_and_recreate_tables:
-        client.delete_db_tables(settings.db_data_dir, settings.table_del_fn, force=False)
-        client.create_db_tables(settings.db_data_dir, settings.table_creation_fn, force=True)
-    # by default the tables are truncated for every run - can be changed in the settings module (src.tests.settings)
-    elif settings.is_truncate_tables:
-        deleted_tables_list = settings.tables_list.split(',')
-        client.truncate_tables(deleted_tables_list)
-    # if tables were removed or truncated it needed to repopulate
-    if any([settings.is_delete_and_recreate_tables, settings.is_truncate_tables]):
-        # insert reference data to ranking_parameters as a precondition to running the tests.
-        client.insert_ranking_parameters(settings.db_data_dir, settings.rank_insert_fn, settings.rank_tn)
-        # run insert process job as a precondition to running the tests.
-        client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
-
-
 @pytest.mark.parametrize('test_name', contents(settings.cfg_tests_dir))
 def test_search_results(search_client, test_name):
     """
@@ -63,7 +38,7 @@ def test_search_results(search_client, test_name):
 
     # clean DB or delete database and then create it - depends on settings.py values:
     # is_delete_and_recreate_tables, is_truncate_tables
-    preconditions_db_activities(search_client)
+    search_client.tear_down
 
     # insert_new_site_into_search_engine_api
     cfg_data = cfg_get_data(test_name)
