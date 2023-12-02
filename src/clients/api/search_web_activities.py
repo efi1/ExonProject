@@ -2,7 +2,7 @@ import os
 import logging
 import secrets
 import sys
-from importlib.resources import files
+from importlib.resources import read_text
 from clients.db.data_base_client import DataBaseClient
 
 logging.getLogger()
@@ -171,9 +171,7 @@ in sea        :param ref: references to search website
 
     def get_search_term_options(self, search_term, query_dir, query_fn):
         logging.info(f'in {sys._getframe().f_code.co_name}')
-        file_path = files(query_dir).joinpath(query_fn)
-        with open(file_path, 'r') as file:
-            query_url = file.read()
+        query_url = read_text(query_dir, query_fn)
         # a special case of a response parsing which refers to this function only, therefore not in data_base_client
         res = self.exec_sql_query(query_url, fetch_all=True, raise_error=False)
         if res.data:

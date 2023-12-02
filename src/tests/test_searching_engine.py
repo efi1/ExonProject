@@ -1,8 +1,8 @@
 import json
-
 import pytest
 from tests import settings
-from importlib.resources import files
+from importlib.resources import files, contents
+
 
 
 def load_test_params(path):
@@ -18,9 +18,8 @@ def cfg_get_data(test_name: str) -> dict:
     :param tests_raw_data: data to be rendered with in the cfg template file
     :return: dict test's data
     """
-    cfg_name = F'{test_name}.json'
     cfg_template_dir = settings.cfg_tests_dir
-    cfg_template_file = files(cfg_template_dir).joinpath(cfg_name)
+    cfg_template_file = files(cfg_template_dir).joinpath(test_name)
     if cfg_template_file.exists():
         return load_test_params(cfg_template_file)
 
@@ -50,8 +49,7 @@ def preconditions_db_activities(client) -> object:
         client.insert_products_job(settings.db_data_dir, settings.products_insert_fn, settings.products_tn)
 
 
-@pytest.mark.parametrize('test_name',
-                         ['test_search_results_sorted_by_priority', 'test_empty_keywords', 'test_duplicate_keywords'])
+@pytest.mark.parametrize('test_name', contents(settings.cfg_tests_dir))
 def test_search_results(search_client, test_name):
     """
     The test performing a search (by given a search term) will end with the correct results and with the right order,
