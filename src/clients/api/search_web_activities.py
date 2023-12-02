@@ -89,8 +89,9 @@ in sea        :param ref: references to search website
                          f'update made')
             return
         if not keywords:
-            logging.info(f'{sys._getframe().f_code.co_name} existing when start - missing keywords api input - no tables '
-                         f'update made')
+            logging.info(
+                f'{sys._getframe().f_code.co_name} existing when start - missing keywords api input - no tables '
+                f'update made')
             return
         token = secrets.token_urlsafe()
         unique_url = F"{url}/{token}"
@@ -207,7 +208,8 @@ in sea        :param ref: references to search website
                     logging.info(F"retrieved unique url link: {elem['product_unique_url']}")
                     exp_elem = expected['results'][results_type][idx]['product_page_url']
                     if elem['product_unique_url']:
-                        if not elem['product_unique_url'].startswith(expected['results'][results_type][idx]['product_page_url']):
+                        if not elem['product_unique_url'].startswith(
+                                expected['results'][results_type][idx]['product_page_url']):
                             return False
                     elif elem['product_unique_url'] != exp_elem:
                         return False
