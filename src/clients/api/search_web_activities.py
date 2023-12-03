@@ -2,8 +2,7 @@ import os
 import logging
 import secrets
 import sys
-from importlib.resources import files
-from importlib.resources import read_text
+from importlib.resources import files, read_text
 from clients.db.data_base_client import DataBaseClient
 
 logging.getLogger()
@@ -144,41 +143,42 @@ class SearchWebsiteActivities(DataBaseClient):
         """
         logging.info(f'{sys._getframe().f_code.co_name} started')
         if os.path.exists(self.data_jobs_path):
-            search_engine_ranking_col = "website_product_rel_id, parameter_id, parameter_value, parameter_grade"
             query = "select * from ranking_parameters;"
             res = self.exec_sql_query(query)
+            # getting reference data from ranking_parameters table ans set it as sef attributes
             for row in res.data:
                 setattr(self, F"r_{row[1]}_id", row[0])  # parameter_id field
                 setattr(self, F"r_{row[1]}_priority", row[2])  # parameter priority
                 setattr(self, F"r_{row[1]}_grade", row[3])  # parameter_grade field
             with open(self.data_jobs_path, 'r') as rank_file:
                 lines = rank_file.readlines()
-                print(lines)
-                for line in lines:
-                    line = line.strip('\n')
-                    ls_1 = line.split(' ')
-                    website_products_id, seniority = ls_1
-                    query = F"""insert into search_engine_ranking 
-                    ({search_engine_ranking_col}) values ({website_products_id}, {self.r_seniority_id}, 
-                    {self.r_seniority_grade * int(seniority)}, {self.r_seniority_grade});"""
-                    res = self.exec_sql_query(query, fetch_all=False)
-                    query = F"""select keywords, ref from websites_products as wp join products as p 
-                                on wp.product_id = p.id where wp.id = {website_products_id};"""
-                    res = self.exec_sql_query(query, fetch_all=False)
-                    if res.data is None:
-                        logging.info(F"cannot find website_products_id = {website_products_id} in {self.data_jobs_path}"
-                                     F"it is not inserted into search_engine_ranking table")
-                        continue
-                    website_product_rel_id = website_products_id
-                    keywords, ref = res.data
-                    keywords = keywords.rstrip(',')
-                    keywords_num = len(keywords.split(','))
-                    query = F"""insert into search_engine_ranking ({search_engine_ranking_col})
-                            values('{website_product_rel_id}','{self.r_ref_id}', {self.r_ref_grade * ref}, {self.r_ref_grade})"""
-                    res = self.exec_sql_query(query)
-                    query = F"""insert into search_engine_ranking ({search_engine_ranking_col})
-                            values('{website_product_rel_id}','{self.r_keywords_id}', {self.r_keywords_grade * keywords_num}, {self.r_keywords_grade})"""
-                    res = self.exec_sql_query(query)
+            for line in lines:
+                line = line.strip('\n')
+                ls_1 = line.split(' ')
+                # insert seniority vals into search_engine_ranking table
+                website_products_id, seniority = ls_1
+                query = F"""insert into search_engine_ranking 
+                ({self.search_engine_ranking_col}) values ({website_products_id}, {self.r_seniority_id}, 
+                {self.r_seniority_grade * int(seniority)}, {self.r_seniority_grade});"""
+                res = self.exec_sql_query(query, fetch_all=False)
+                # getting other elements values; keywords, ref
+                query = F"""select keywords, ref from websites_products as wp join products as p 
+                            on wp.product_id = p.id where wp.id = {website_products_id};"""
+                res = self.exec_sql_query(query, fetch_all=False)
+                if res.data is None:
+                    logging.info(F"cannot find website_products_id = {website_products_id} in {self.data_jobs_path}"
+                                 F"it is not inserted into search_engine_ranking table")
+                    continue
+                website_product_rel_id = website_products_id
+                keywords, ref = res.data
+                keywords = keywords.rstrip(',')
+                keywords_num = len(keywords.split(','))
+                query = F"""insert into search_engine_ranking ({self.search_engine_ranking_col})
+                        values('{website_product_rel_id}','{self.r_ref_id}', {self.r_ref_grade * ref}, {self.r_ref_grade})"""
+                res = self.exec_sql_query(query)
+                query = F"""insert into search_engine_ranking ({self.search_engine_ranking_col})
+                        values('{website_product_rel_id}','{self.r_keywords_id}', {self.r_keywords_grade * keywords_num}, {self.r_keywords_grade})"""
+                res = self.exec_sql_query(query)
         else:
             logging.info('update ranking - found no new websites to update')
             message = 'No Data Found'

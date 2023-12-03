@@ -1,6 +1,6 @@
 import pytest
 from tests import settings
-from importlib.resources import files, contents
+from importlib.resources import contents
 from conftest import cfg_get_data
 
 
@@ -30,15 +30,16 @@ def test_search_results(search_client, test_name):
                                                                                     website['keywords'],
                                                                                     website['seniority'],
                                                                                     website['ref'])} for website in
-                                                                                    (cfg_data['websites'])]
+        (cfg_data['websites'])]
     r = search_client.validate_test_result({"data": unique_url_l}, cfg_data, 'insertion_results')
     # validate that the retrieved url is as expected
-    assert r == True, F"wrong results; expected: {cfg_data['results']['insertion_results']}, actual: {unique_url_l}"
+    assert r is True, F"wrong results; expected: {cfg_data['results']['insertion_results']}, actual: {unique_url_l}"
+    # to be run only if the former assertion completed successfully
     res = search_client.update_ranking_job
     assert res == cfg_data['results'][
-        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']['search_results']}, actual: {res['data']}"
+        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']['ranking_job_result']}, actual: {res['data']}"
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res, cfg_data, 'search_results')
     # check that the search results order is correct as well as the retrieved unique url
-    assert r == True, F"wrong results; expected: {cfg_data['results']['search_results']}, actual: {res['data']}"
+    assert r is True, F"wrong results; expected: {cfg_data['results']['search_results']}, actual: {res['data']}"
