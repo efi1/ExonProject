@@ -26,11 +26,12 @@ The flow of the main functions of the major client reflects the business logic, 
   other websites. This results take into account also the prioritiy of each of the website's elements which took place in the calculation of the
   parameter_value (it refer to the references, keywords and seniority).
 
+- ## Project structure:
 
-- Project structure:
     - test's data resides ynder **src/data/cfg_test** folder.
     - sql queries, table's data which is needed for the clients is resides under **src.data.db_data**.
-    - **job_data** folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api process (+api),
+    - **job_data** folder is used for temporary files which are being created during the insert_new_site_into_search_engine_api
+      process (+api),
       and deleted when update_ranking_job process is finished.
     - running **log** is created under src folder when running the test. You may view the unique url value in the log.
     - both clients resides under **src.client; src.clients.api** - for the major client and src.clients.db for the db client.
@@ -48,16 +49,47 @@ The flow of the main functions of the major client reflects the business logic, 
         it is relevant if you use the same input (test's input) for repeated iteration running.
         - you may leave it as it is, it is also okay.
 
-- Before running the test:
+## Before running the test:
   - clone it from Github to your local environment.
-  - Go to 'src' folder (cli) and run this setup process: python setup.py install
-    * you should run it while residing in the 'src' folder.
+  - Create a Python virtual environment.
+# To create a virtualenv (and activate it):
+## On Windows:
+* create a virtualenv
+- **c:\path\to\python -m venv c:\path\to\myenv\venv**
+- or while residing in the root of the Python project directory (assuming python.exe is callable):
+  **python -m venv .\venv**
+ * activate the virtualenv
+ While residing in the root of the Python project directory:
+ **.\venv\Scripts\Activate.ps1**
+      
+## on Linux (Debian - Ubuntu)
+* update your Ubuntu environment first:
+**apt-get update** ( you may add this flag:   --fix-missing  if problem is consist).
+* install virtuenv package
+**sudo apt install python3-venv**
+* create the virtualenv
+**/usr/bin/python3 -m venv /path/to/root/of/project/venv**
+i.e., **python3 -m venv /mnt/d/ExonProject/venv**
+## To activate virtual env (Linux)
+While residing in the root of the Python project directory:
+**source venv/bin/activate**
 
-- How to run the test?  
-  - from cli: python -m pytest
-    * you should run it while being in the 'src' folder.
+## To exit virtual env (for both Linux and Windows)
+simpley type: deactivate
+    
+# install setup.py 
+The setup.py file is placed at the root of the Python project directory. It primarily serves two purposes:
+- It includes choices and metadata about the program, such as the package name, version, author, license, minimal dependencies, entry points, data files, and so on.
+- Secondly, it serves as the command line interface via which packaging commands may be executed.
+- **to install**
+  - Activate the virtualenv
+  - Under the root of the Python project directory via cli run this: **python setup.py install**
 
-- I have written a single automation test, which reflects the entire flow that described above.
+## To run the tests via pytest (for both Windows and Linux)
+- I have written a parametrized automation test, which reflects the entire flow that described above and includes 3 tests.
+- To run the test:
+via cli, while being in the 'src' folder, type:
+**python -m pytests**
       
   
 
