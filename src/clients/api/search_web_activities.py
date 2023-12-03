@@ -11,22 +11,11 @@ logging.getLogger()
 
 class SearchWebsiteActivities(DataBaseClient):
     def __init__(self, **kwargs):
-        db_path = files(kwargs['db_client_dir']).joinpath(kwargs['db_name'])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+        db_path = files(self.db_client_dir).joinpath(self.db_name)
+        self.data_jobs_path = files(self.db_client_dir).joinpath(self.data_jobs_fn)
         super().__init__(db_path)
-        self.db_data_dir = kwargs['db_data_dir']
-        self.table_del_fn = kwargs['table_del_fn']
-        self.table_creation_fn = kwargs['table_creation_fn']
-        self.products_tn = kwargs['products_tn']
-        self.products_insert_fn = kwargs['products_insert_fn']
-        self.rank_insert_fn = kwargs['rank_insert_fn']
-        self.rank_tn = kwargs['rank_tn']
-        self.data_jobs_fn = kwargs['data_jobs_fn']
-        self.tables_list = kwargs['tables_list']
-        self.search_query_fn = kwargs['search_query_fn']
-        self.is_delete_updating_ranking_file = kwargs['is_delete_updating_ranking_file']
-        self.is_delete_and_recreate_tables = kwargs['is_delete_and_recreate_tables']
-        self.is_truncate_tables = kwargs['is_truncate_tables']
-        self.data_jobs_path = files(kwargs['db_client_dir']).joinpath(self.data_jobs_fn)
 
 
     def delete_db_tables(self, json_dir: str, json_fn: str,
