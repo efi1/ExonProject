@@ -13,7 +13,7 @@ class SearchWebsiteActivities(DataBaseClient):
         for key in kwargs:
             setattr(self, key, kwargs[key])
         db_path = files(self.db_client_dir).joinpath(self.db_name)
-        self.data_jobs_path = files(self.db_client_dir).joinpath(self.data_jobs_fn)
+        self.data_jobs_path = files(self.data_jobs_dir).joinpath(self.data_jobs_fn)
         super().__init__(db_path)
 
 
