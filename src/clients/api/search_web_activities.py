@@ -22,6 +22,7 @@ class SearchWebsiteActivities(DataBaseClient):
         self.rank_tn = kwargs['rank_tn']
         self.data_jobs_fn = kwargs['data_jobs_fn']
         self.tables_list = kwargs['tables_list']
+        self.search_query_fn = kwargs['search_query_fn']
         self.is_delete_updating_ranking_file = kwargs['is_delete_updating_ranking_file']
         self.is_delete_and_recreate_tables = kwargs['is_delete_and_recreate_tables']
         self.is_truncate_tables = kwargs['is_truncate_tables']
@@ -196,9 +197,9 @@ class SearchWebsiteActivities(DataBaseClient):
         logging.info(message)
         return {"status": "success", "data": [], "msg": message}
 
-    def get_search_term_options(self, search_term, query_dir, query_fn):
+    def get_search_term_options(self, search_term):
         logging.info(f'{sys._getframe().f_code.co_name} started')
-        query_url = read_text(query_dir, query_fn)
+        query_url = read_text(self.db_data_dir, self.search_query_fn)
         # a special case of a response parsing which refers to this function only, therefore not in data_base_client
         res = self.exec_sql_query(query_url, fetch_all=True, raise_error=False)
         if res.data:

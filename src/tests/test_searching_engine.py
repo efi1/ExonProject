@@ -37,7 +37,7 @@ def test_search_results(search_client, test_name):
     res = search_client.update_ranking_job
     assert res == cfg_data['results'][
         'ranking_job_result'], F"wrong results; expected: {cfg_data['result']['search_results']}, actual: {res['data']}"
-    res = search_client.get_search_term_options('leisure time', settings.db_data_dir, settings.search_query_fn)
+    res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res, cfg_data, 'search_results')
     # check that the search results order is correct as well as the retrieved unique url
