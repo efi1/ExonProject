@@ -15,7 +15,7 @@ data_jobs_dir = 'data.jobs_data'
 tables_list = "websites, products, websites_products, search_engine_ranking, ranking_parameters"
 is_delete_updating_ranking_file = True
 is_delete_tables = False
-is_create_tables = True
+is_create_tables = False
 is_truncate_tables = True
 
 

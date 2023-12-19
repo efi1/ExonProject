@@ -67,9 +67,9 @@ class SearchWebsiteActivities(DataBaseClient):
         output = {"status": "success", "data": f'{self.rank_tn}', "msg": ""}
         if any([self.is_delete_tables, self.is_truncate_tables]):
             res = self.insert_into_table(self.db_data_dir, self.rank_insert_fn, table_name=self.rank_tn)
-        output['msg'] = res['status']
-        logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
-        return output
+            output['msg'] = res['status']
+            logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
+            return output
 
     @property
     def insert_products_job(self) -> dict:
@@ -84,9 +84,9 @@ class SearchWebsiteActivities(DataBaseClient):
         output = {"status": "success", "data": f'{self.products_tn}', "msg": ""}
         if any([self.is_delete_tables, self.is_truncate_tables]):
             res = self.insert_into_table(self.db_data_dir, self.products_insert_fn, table_name=self.products_tn)
-        output['msg'] = res['status']
-        logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
-        return output
+            output['msg'] = res['status']
+            logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
+            return output
 
     def insert_new_site_into_search_engine_api(self, url: str, product: str, keywords: dict, seniority: int,
                                                ref: int = 0) -> str:
