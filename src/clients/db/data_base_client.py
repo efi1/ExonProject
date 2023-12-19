@@ -4,13 +4,15 @@ import sqlite3
 from importlib.resources import files
 from typing import List
 from munch import DefaultMunch
+from dataclasses import dataclass
 
 logging.getLogger()
 
 
-class DataBaseClient(object):
+class DataBaseClient():
     def __init__(self, db_name):
         self.conn = DataBaseClient._create_connection(db_name)
+        self.return_query_msg = ReturnQueryMsg(self.conn)
 
     @classmethod
     def _create_connection(cls, db_name) -> object:
@@ -33,16 +35,8 @@ class DataBaseClient(object):
         :return: an object with the query result
         """
         query = "SELECT count() FROM sqlite_master WHERE type='table';"
-        try:
-            cur = self.conn.execute(query)
-        except Exception as e:
-            err_msg = {"status": "error", "data": F"query: {query}", "msg": F"{e}"}
-            logging.info(err_msg)
-            if raise_error:
-                raise Exception(err_msg)
-            return DefaultMunch.fromDict(err_msg)
-        res = sum([sum(i) for i in cur.fetchall()])
-        return DefaultMunch.fromDict({"status": "success", "data": res})
+        res = self.return_query_msg.return_msg(query, fetch_all=False, commit=True)
+        return DefaultMunch.fromDict(res)
 
     def truncate_tables(self, table_list: List[str], raise_error=True) -> object:
         """
@@ -50,20 +44,14 @@ class DataBaseClient(object):
         :param table_list: tables to be truncated
         :return: an object with the query result
         """
+        out = []
         for table_name in table_list:
             query = F"delete from {table_name};"
-            try:
-                cur = self.conn.execute(query)
-            except Exception as e:
-                err_msg = {"status": "error", "data": F"query: {query}", "msg": F"{e}"}
-                logging.info(err_msg)
-                if raise_error:
-                    raise Exception(err_msg)
-                return DefaultMunch.fromDict({"status": "error", "data": F"query: {query}", "msg": F"{e}"})
-        res = sum([sum(i) for i in cur.fetchall()])
-        return DefaultMunch.fromDict({"status": "success", "data": res})
+            res = self.return_query_msg.return_msg(query, commit=True)
+            out.append(res)
+        return DefaultMunch.fromDict({"status": "success", "data": out})
 
-    def exec_sql_query(self, sql_query: str, fetch_all: bool = True, raise_error=True, commit=True) -> object:
+    def exec_sql_query(self, sql_query: str, fetch_all: bool = True, raise_error: bool = True, commit: bool = True) -> object:
         """
         execute a single query
         :param sql_query: a string which represents a single query
@@ -72,19 +60,8 @@ class DataBaseClient(object):
         :param raise_error: stop execution when error occurs
         :return: an object with the query result
         """
-        try:
-            cursor = self.conn.execute(sql_query)
-        except Exception as e:
-            query = sql_query.replace('  ', '').replace('\n', ' ')
-            err_msg = {"status": "error", "data": F"query: {query}", "msg": F"{e}"}
-            logging.info(err_msg)
-            if raise_error:
-                raise Exception({"status": "error", "data": F"query: {query}", "msg": F"{e}"})
-            return DefaultMunch.fromDict({"status": "error", "data": F"query: {query}", "msg": F"{e}"})
-        if commit:
-            self.conn.commit()
-        res = cursor.fetchall() if fetch_all == True else cursor.fetchone()
-        return DefaultMunch.fromDict({"status": "success", "data": res})
+        res = self.return_query_msg.return_msg(sql_query, commit = True, fetch_all = fetch_all)
+        return DefaultMunch.fromDict(res)
 
     def exec_sql_queries(self, query: List[str] = None, json_dir: str = None, json_fn: str = None,
                          fetch_all: bool = True, raise_error=True, commit: bool = True) -> object:
@@ -110,24 +87,14 @@ class DataBaseClient(object):
         else:
             data_query = query
         for query in data_query:
-            cur = self.conn.cursor()
-            try:
-                cur.execute(query)
-            except Exception as e:
-                query = query.replace('  ', '').replace('\n', ' ')
-                err_msg = {"status": "error", "data": F"query: {query}", "msg": F"{e}"}
-                logging.info(err_msg)
-                if raise_error:
-                    raise Exception(err_msg)
-                return DefaultMunch.fromDict(err_msg)
-            res = cur.fetchall() if fetch_all else cur.fetchone()
-            output.append(F"query: {query}  result: {res}")
+            res = self.return_query_msg.return_msg(query)
+            output.append(res)
             if commit:
                 self.conn.commit()
         return DefaultMunch.fromDict({"status": "success", "data": output})
 
-    def insert_into_table(self, json_dir: str, json_fn: str,
-                          table_name: str = None, raise_error=True) -> object:
+    def insert_into_table(self, json_dir: str, json_fn: str, commit: bool = True, fetch_all: bool = True,
+                          table_name: str = None, raise_error: bool = True) -> object:
         """
         insert a new raw into a table (or a list of tables)
         :param table_name: a single table name for insertion
@@ -138,23 +105,17 @@ class DataBaseClient(object):
         """
         json_file_path = files(json_dir).joinpath(json_fn)
         content = DataBaseClient.load_json(json_file_path)
-        cur = self.conn.cursor()
+        out = []
         for t_name in content:
             if table_name and t_name != table_name:
                 continue
             table_data = content.get(t_name)
             insertion_data = table_data.get('data')
             for data_row in insertion_data:
-                try:
-                    cur.execute(F"INSERT INTO {t_name}({table_data.get('columns')}) VALUES ({data_row})")
-                except Exception as e:
-                    err_msg = {"status": "error", "data": [], "msg": F"{e}"}
-                    logging.info(err_msg)
-                    if raise_error:
-                        raise Exception(err_msg)
-                    return DefaultMunch.fromDict(err_msg)
-            self.conn.commit()
-        return DefaultMunch.fromDict({"status": "success", "data": cur.lastrowid})
+                query = F"INSERT INTO {t_name}({table_data.get('columns')}) VALUES ({data_row})"
+                msg = self.return_query_msg.return_msg(query, raise_error=raise_error, commit=commit, fetch_all=fetch_all)
+                out.append(msg)
+        return DefaultMunch.fromDict({"status": "success", "data": out})
 
     @classmethod
     def load_json(cls, json_path) -> dict:
@@ -166,3 +127,42 @@ class DataBaseClient(object):
         with open(json_path, '+r') as file:
             content = json.load(file)
             return content
+
+
+@dataclass
+class ReturnQueryMsg:
+    conn: object
+
+    def parse_res(self, fetch_all):
+        if fetch_all:
+            res = self.cur.fetchall()
+        else:
+            res = self.cur.fetchone()
+        if res and len(res) == 1:
+            res = res[0]
+        return res
+
+    def is_error(self, query, commit, fetch_all):
+        try:
+            self.cur = self.conn.cursor()
+            self.cur.execute(query)
+            res = self.parse_res(fetch_all)
+            if commit:
+                self.conn.commit()
+        except sqlite3.DatabaseError as err:
+            return True, err
+        return False, res
+
+    def return_msg(self, query, raise_error=True, commit=True, fetch_all=True):
+        msg = {"status": "", "data": "", "query": F"{query}", "msg": ""}
+        is_error, res = self.is_error(query, commit, fetch_all)
+        if is_error:
+            msg['status'] = 'error'
+            msg['msg'] = res
+            logging.info(msg)
+            if raise_error:
+                raise Exception(msg)
+        else:
+            msg['status'] = 'success'
+            msg['data'] = res
+        return msg

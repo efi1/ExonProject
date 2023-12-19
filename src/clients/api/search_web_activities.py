@@ -12,9 +12,9 @@ class SearchWebsiteActivities(DataBaseClient):
     def __init__(self, **kwargs):
         for key in kwargs:
             setattr(self, key, kwargs[key])
-        db_path = files(self.db_client_dir).joinpath(self.db_name)
+        self.db_path = files(self.db_client_dir).joinpath(self.db_name)
         self.data_jobs_path = files(self.data_jobs_dir).joinpath(self.data_jobs_fn)
-        super().__init__(db_path)
+        super().__init__(self.db_path)
 
 
     def delete_db_tables(self, json_dir: str, json_fn: str,
@@ -65,7 +65,7 @@ class SearchWebsiteActivities(DataBaseClient):
         """
         logging.info(f'{sys._getframe().f_code.co_name} started')
         output = {"status": "success", "data": f'{self.rank_tn}', "msg": ""}
-        if any([self.is_delete_and_recreate_tables, self.is_truncate_tables]):
+        if any([self.is_delete_tables, self.is_truncate_tables]):
             res = self.insert_into_table(self.db_data_dir, self.rank_insert_fn, table_name=self.rank_tn)
         output['msg'] = res['status']
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
@@ -82,7 +82,7 @@ class SearchWebsiteActivities(DataBaseClient):
         """
         logging.info(f'{sys._getframe().f_code.co_name} started')
         output = {"status": "success", "data": f'{self.products_tn}', "msg": ""}
-        if any([self.is_delete_and_recreate_tables, self.is_truncate_tables]):
+        if any([self.is_delete_tables, self.is_truncate_tables]):
             res = self.insert_into_table(self.db_data_dir, self.products_insert_fn, table_name=self.products_tn)
         output['msg'] = res['status']
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
@@ -103,18 +103,13 @@ class SearchWebsiteActivities(DataBaseClient):
             logging.info(f'{sys._getframe().f_code.co_name} existing on starting - missing all api input - no tables '
                          f'update made')
             return
-        if not keywords:
-            logging.info(
-                f'{sys._getframe().f_code.co_name} existing when start - missing keywords api input - no tables '
-                f'update made')
-            return
         token = secrets.token_urlsafe()
         unique_url = F"{url}/{token}"
         query = F"insert into websites (url) values ('{url}');"
         self.exec_sql_query(query, fetch_all=False, commit=True)
         query = F"select max(id) from websites;"
         res = self.exec_sql_query(query, fetch_all=False)
-        website_id = int(''.join(map(str, res.data)))
+        website_id = res.data
         query = F"select products.id, keywords from products where name = '{product}';"
         res = self.exec_sql_query(query, fetch_all=False)
         if res.data:
@@ -128,7 +123,7 @@ class SearchWebsiteActivities(DataBaseClient):
                 self.exec_sql_query(query, fetch_all=False, commit=True)
                 query = F"select max(id) from websites_products;"
                 res = self.exec_sql_query(query, fetch_all=False)
-                websites_products_id, = res.data
+                websites_products_id = res.data
                 with open(self.data_jobs_path, "a+") as tmp_rank_fn:
                     tmp_rank_fn.write(f'{websites_products_id} {seniority}\n')
         logging.info(f'{sys._getframe().f_code.co_name} job finished')
@@ -174,10 +169,12 @@ class SearchWebsiteActivities(DataBaseClient):
                 keywords = keywords.rstrip(',')
                 keywords_num = len(keywords.split(','))
                 query = F"""insert into search_engine_ranking ({self.search_engine_ranking_col})
-                        values('{website_product_rel_id}','{self.r_ref_id}', {self.r_ref_grade * ref}, {self.r_ref_grade})"""
+                        values('{website_product_rel_id}','{self.r_ref_id}', {self.r_ref_grade * ref}, 
+                                                                                            {self.r_ref_grade})"""
                 res = self.exec_sql_query(query)
                 query = F"""insert into search_engine_ranking ({self.search_engine_ranking_col})
-                        values('{website_product_rel_id}','{self.r_keywords_id}', {self.r_keywords_grade * keywords_num}, {self.r_keywords_grade})"""
+                        values('{website_product_rel_id}','{self.r_keywords_id}',
+                                        {self.r_keywords_grade * keywords_num}, {self.r_keywords_grade})"""
                 res = self.exec_sql_query(query)
         else:
             logging.info('update ranking - found no new websites to update')
@@ -241,7 +238,7 @@ class SearchWebsiteActivities(DataBaseClient):
             else:
                 output['msg']['delete_update_rank_file'] = 'No file Found'
         # if in settings, the tables are set to be removed
-        if self.is_delete_and_recreate_tables:
+        if any([self.is_delete_tables, self.is_create_tables]):
             self.delete_db_tables(self.db_data_dir, self.table_del_fn, force=False)
             self.create_db_tables(self.db_data_dir, self.table_creation_fn, force=True)
             output['msg']['db_tables'].append('tables deleted and recreated successfully')
@@ -252,3 +249,4 @@ class SearchWebsiteActivities(DataBaseClient):
             output['msg']['db_tables'].append('tables truncated successfully')
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output
+

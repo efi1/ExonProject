@@ -4,7 +4,7 @@ from importlib.resources import contents
 from conftest import cfg_get_data
 
 
-@pytest.mark.parametrize('test_name', contents(settings.cfg_tests_dir))
+@pytest.mark.parametrize('test_name', contents(settings.cfg_tests_dir))  # ['test_empty_keywords.json']
 def test_search_results(search_client, test_name):
     """
     The test performing a search (by given a search term) will end with the correct results and with the right order,
@@ -15,7 +15,7 @@ def test_search_results(search_client, test_name):
     """
     """execute tear_down:
         clean DB or delete database and then create it - depends on settings.py values:
-        is_delete_and_recreate_tables, is_truncate_tables
+        is_delete_tables, is_truncate_tables
         # also delete to_be_inserted_into_ranking.txt file if exist and if is_delete_updating_ranking_file=True
     """
     search_client.tear_down
@@ -36,8 +36,7 @@ def test_search_results(search_client, test_name):
     assert r is True, F"wrong results; expected: {cfg_data['results']['insertion_results']}, actual: {unique_url_l}"
     # to be run only if the former assertion completed successfully
     res = search_client.update_ranking_job
-    assert res == cfg_data['results'][
-        'ranking_job_result'], F"wrong results; expected: {cfg_data['result']['ranking_job_result']}, actual: {res['data']}"
+    assert res == cfg_data['results']['ranking_job_result'], F"wrong results; expected: {cfg_data['results']['ranking_job_result']}, actual: {res['data']}"
     res = search_client.get_search_term_options('leisure time')
     assert res['status'] == 'success', F"Error occurred {res['data']}"
     r = search_client.validate_test_result(res, cfg_data, 'search_results')
