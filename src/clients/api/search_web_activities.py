@@ -55,7 +55,6 @@ class SearchWebsiteActivities(DataBaseClient):
         logging.info(f'{sys._getframe().f_code.co_name} finished successfully')
         return res
 
-    @property
     def insert_ranking_parameters(self) -> dict:
         """
         insert ref data into ranking_parameters table using data_base_client.insert_into_table api (function)
@@ -71,7 +70,6 @@ class SearchWebsiteActivities(DataBaseClient):
             logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
             return output
 
-    @property
     def insert_products_job(self) -> dict:
         """
         insert data (products, keywords) from a file into products table using data_base_client.insert_into_table api (function)
@@ -129,7 +127,6 @@ class SearchWebsiteActivities(DataBaseClient):
         logging.info(f'{sys._getframe().f_code.co_name} job finished')
         return unique_url
 
-    @property
     def update_ranking_job(self) -> object:
         """
         update the ranking table with the inserted websites and calculates the parameters value
@@ -228,7 +225,6 @@ class SearchWebsiteActivities(DataBaseClient):
             return False
         return True
 
-    @property
     def tear_down(self):
         logging.info(f'{sys._getframe().f_code.co_name} started')
         output = {"status": "success", "data": f'{self.data_jobs_path}', "msg": {"delete_update_rank_file": F"file deleted successfully", "db_tables": []}}
