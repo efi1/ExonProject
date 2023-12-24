@@ -83,7 +83,7 @@ The setup.py file is placed at the root of the Python project directory. It prim
 - Secondly, it serves as the command line interface via which packaging commands may be executed.
 - **to install**
   - Activate the virtualenv
-  - Under the root of the Python project directory via cli run this: **python setup.py install**
+  - Under the root of the Python project directory via cli run this: "**python -m pip install .**" (include the dot at the end)
 
 ## To run the tests via pytest (for both Windows and Linux)
 - I have written a parametrized automation test, which reflects the entire flow that described above and includes 3 tests.

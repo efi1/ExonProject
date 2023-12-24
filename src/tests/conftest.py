@@ -7,16 +7,17 @@ from clients.api.search_web_activities import SearchWebsiteActivities
 
 
 @fixture(scope="session")
-def init_client() -> object:
+def init_client() -> SearchWebsiteActivities:
     """
     instantiate the search_client
     :return: client instant
     """
-    return SearchWebsiteActivities(**vars(settings))
+    test_client = SearchWebsiteActivities(**vars(settings))
+    return test_client
 
 
 @fixture(scope="function")
-def test_client(init_client) -> object:
+def test_client(init_client) -> SearchWebsiteActivities:
     init_client.tear_down()
     # insert into insert_ranking_parameters DB table.
     init_client.insert_ranking_parameters()

@@ -16,7 +16,6 @@ class SearchWebsiteActivities(DataBaseClient):
         self.data_jobs_path = files(self.data_jobs_dir).joinpath(self.data_jobs_fn)
         super().__init__(self.db_path)
 
-
     def delete_db_tables(self, json_dir: str, json_fn: str,
                          force: bool = False) -> object:
         """
@@ -227,7 +226,8 @@ class SearchWebsiteActivities(DataBaseClient):
 
     def tear_down(self):
         logging.info(f'{sys._getframe().f_code.co_name} started')
-        output = {"status": "success", "data": f'{self.data_jobs_path}', "msg": {"delete_update_rank_file": F"file deleted successfully", "db_tables": []}}
+        output = {"status": "success", "data": f'{self.data_jobs_path}',
+                  "msg": {"delete_update_rank_file": F"file deleted successfully", "db_tables": []}}
         if self.is_delete_updating_ranking_file:
             if os.path.exists(self.data_jobs_path):
                 os.unlink(self.data_jobs_path)
@@ -245,4 +245,3 @@ class SearchWebsiteActivities(DataBaseClient):
             output['msg']['db_tables'].append('tables truncated successfully')
         logging.info(F"{sys._getframe().f_code.co_name} finished, {output['msg']}\n\n")
         return output
-
